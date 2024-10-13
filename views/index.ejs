@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Citation Mystique</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Garamond', serif;
+            color: #f5f3f4;
+            text-align: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 36px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 2px 2px 5px #000000;
+        }
+
+        p {
+            font-size: 24px;
+            font-style: italic;
+            margin-bottom: 40px;
+            color: #e0e0e0;
+            text-shadow: 1px 1px 3px #000000;
+        }
+
+        .author {
+            font-size: 20px;
+            color: #f8b400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            padding: 10px 20px;
+            background-color: #f8b400;
+            color: #24243e;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-btn:hover {
+            background-color: #d29e00;
+        }
+
+        /* Animation pour un effet mystique */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            animation: fadeIn 2s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="quote">“L'univers est une danse de mystères...”</h1>
+        <p class="author">- Anonyme</p>
+        <button class="copy-btn" onclick="copyText()">Copier la citation</button>
+    </div>
+
+    <script>
+    loadPage()
+        function loadPage() {
+            // get the id from the url
+            var urlParams = new URLSearchParams(window.location.search);
+            var id = urlParams.get('id');
+            console.log(id);
+            // if there is an id
+            if (id) {
+                // get the page /api/getCitationById
+                fetch('/api/getCitations')
+                    .then(response => response.json())
+                    .then(data => {
+                        // get the quote element
+                        var quote = document.getElementById("quote");
+                        // get the author element
+                        var author = document.querySelector('.author');
+                        // get the quote by id
+                        var quoteById = data.find(quote => quote.id == id);
+                        // set the quote text
+                        quote.innerText = "“" + quoteById.citation + "”";
+                        // set the author text
+                        author.innerText = "- " + quoteById.author;
+
+                    });
+            } else {
+                // if there is no id, get a random quote
+                getAllCitations();
+            }
+        }
+        function getAllCitations() {
+            // get the page /api/getCitations
+            fetch('/api/getCitations')
+                .then(response => response.json())
+                .then(data => {
+                    // get the quote element
+                    var quote = document.getElementById("quote");
+                    // get the author element
+                    var author = document.querySelector('.author');
+                    // get a random quote
+                    var randomQuote = data[Math.floor(Math.random() * data.length)];
+                    // set the quote text
+                    quote.innerText = "“" + randomQuote.citation + "”";
+                    // set the author text
+                    author.innerText = "- " + randomQuote.author;
+
+                    var id = randomQuote.id;
+                    // change url to have the id
+                    window.history.pushState({}, '', '/?id=' + id);
+                });
+        }
+        function copyText() {
+            // Le texte de la citation à copier
+            var quote = document.getElementById("quote").innerText + " " + document.querySelector('.author').innerText;
+            
+            // Créer un élément temporaire pour copier le texte
+            var tempInput = document.createElement("textarea");
+            tempInput.value = quote;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Changer le texte du bouton pour confirmer la copie
+            var btn = document.querySelector('.copy-btn');
+            btn.innerText = "Citation copiée !";
+            
+            // Revenir à l'état normal après quelques secondes
+            setTimeout(function() {
+                btn.innerText = "Copier la citation";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

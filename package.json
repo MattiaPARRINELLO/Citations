@@ -1,0 +1,23 @@
+{
+  "name": "citations",
+  "version": "0.0.1",
+  "description": "A page with citations",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "caca"
+  ],
+  "author": "Mattia PARRINELLO",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.1.7"
+  }
+}
